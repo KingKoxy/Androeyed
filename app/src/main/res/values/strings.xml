@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name" translatable="true">Androeyed</string>
+    <string name="btnStart" translatable="true">Get Started</string>
+    <string name="imgStartDescription" translatable="true">App Logo</string>
+    <string name="title_activity_navigation" translatable="true">NavigationActivity</string>
+    <string name="cdcamera" translatable="true">Camera Button</string>
+    <string name="cdlist" translatable="true">List Button</string>
+    <string name="cdgallery" translatable="true">Gallery Button</string>
+    <string name="texthint" translatable="true">Your scanned text will appear here!</string>
+    <string name="photoBtnDesk" translatable="true">Photo Button</string>
+    <string name="cdetc">Etc</string>
+    <string name="hint_list_title">Title</string>
+    <string name="de_listitemicon">ListItemIcon</string>
+    <string name="hint_list_description">Description</string>
+    <string name="deletequestion">Do you really want to delete this file?</string>
+    <string name="abbrechenbtn">Cancel</string>
+    <string name="deletebtn">Delete</string>
+</resources>

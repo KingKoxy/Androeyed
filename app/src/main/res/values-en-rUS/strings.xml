@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name" >Androeyed</string>
+    <string name="btnStart" >Get Started</string>
+    <string name="imgStartDescription" >App Logo</string>
+    <string name="title_activity_navigation" >NavigationActivity</string>
+    <string name="cdcamera" >Camera Button</string>
+    <string name="cdlist" >List Button</string>
+    <string name="cdgallery" >Gallery Button</string>
+    <string name="texthint" >Your scanned text will appear here!</string>
+    <string name="photoBtnDesk" >Photo Button</string>
+    <string name="cdetc">Etc</string>
+    <string name="hint_list_title">Title</string>
+    <string name="de_listitemicon">ListItemIcon</string>
+    <string name="hint_list_description">Description</string>
+    <string name="deletequestion" >Do you really want to delete this file?</string>
+    <string name="abbrechenbtn">Cancel</string>
+    <string name="deletebtn">Delete</string>
+</resources>
