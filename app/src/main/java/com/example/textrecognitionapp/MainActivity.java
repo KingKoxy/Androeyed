@@ -47,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
     EditText textBox;
     Speaker speaker;
 
-    Uri currentPhotoPath;
+    Uri currentPhotoPath = null;
 
     //Codes:
     final int CAMERA_CODE = 0, LIBRARY_CODE = 1, GALLERY_CODE = 2, CHECK_TTS_CODE = 3;
@@ -160,7 +160,7 @@ public class MainActivity extends AppCompatActivity {
 
             //Lesen des Textes auf Foto
             readTextFromImage(BitmapFactory.decodeFile(picturePath, options));
-        } else if (requestCode == CAMERA_CODE) {
+        } else if (requestCode == CAMERA_CODE && null != currentPhotoPath) {
             //Falls Resultat aus Kamera
             //Rotieren und Scalieren des Fotos, um lesbar zu machen
             Bitmap bitmap = null;
@@ -170,7 +170,9 @@ public class MainActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
             //Erfassen des Textes auf Foto
-            readTextFromImage(bitmap);
+            if (bitmap != null) {
+                readTextFromImage(bitmap);
+            }
 
         } else if (requestCode == LIBRARY_CODE && resultCode == RESULT_OK && null != data) {
             //Falls Resultat aus LibraryActivity
