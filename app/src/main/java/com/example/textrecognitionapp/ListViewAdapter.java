@@ -8,15 +8,12 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.PopupWindow;
 import android.widget.TextView;
-
-import com.google.android.gms.vision.Frame;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -64,15 +61,15 @@ public class ListViewAdapter extends BaseAdapter {
         view = convertView;
         if (view == null)
             view = inflater.inflate(R.layout.archive_row, null);
-        TextView text = (TextView) view.findViewById(R.id.titleBox);
+        TextView text = view.findViewById(R.id.titleBox);
         text.setText(data[position]);
         trashBtn = view.findViewById(R.id.btnDelete);
         trashBtn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 View customView = inflater.inflate(R.layout.popup, null);
 
-                closePopupBtn = (Button) customView.findViewById(R.id.btnCancel);
-                deleteBtn = (Button) customView.findViewById(R.id.btnDelete);
+                closePopupBtn = customView.findViewById(R.id.btnCancel);
+                deleteBtn = customView.findViewById(R.id.btnDelete);
 
                 //instantiate popup window
                 popupWindow = new PopupWindow(customView, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -93,7 +90,7 @@ public class ListViewAdapter extends BaseAdapter {
                 deleteBtn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        ((Activity) context).getFilesDir().listFiles()[position].delete();
+                        context.getFilesDir().listFiles()[position].delete();
                         ((Activity) context).recreate();
                         popupWindow.dismiss();
                     }
@@ -104,7 +101,7 @@ public class ListViewAdapter extends BaseAdapter {
             int pos = position;
 
             public void onClick(View v) {
-                String text = ((Activity) context).getFilesDir().listFiles()[pos].getName();
+                String text = context.getFilesDir().listFiles()[pos].getName();
                 dataRet.setData(Uri.parse(text));
                 ((Activity) context).setResult(RESULT_OK, dataRet);
                 ((Activity) context).finish();

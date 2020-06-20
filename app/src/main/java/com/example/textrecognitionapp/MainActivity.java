@@ -1,19 +1,14 @@
 package com.example.textrecognitionapp;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.FileProvider;
-
-import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
-import android.graphics.drawable.Drawable;
+import android.media.ExifInterface;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -24,6 +19,9 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.FileProvider;
 
 import com.google.android.gms.vision.Frame;
 import com.google.android.gms.vision.text.TextBlock;
@@ -118,6 +116,29 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    private static Bitmap rotateImageIfRequired(Context context, Bitmap img, Uri selectedImage) throws IOException {
+
+        InputStream input = context.getContentResolver().openInputStream(selectedImage);
+        ExifInterface ei;
+        if (Build.VERSION.SDK_INT > 23)
+            ei = new ExifInterface(input);
+        else
+            ei = new ExifInterface(selectedImage.getPath());
+
+        int orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
+
+        switch (orientation) {
+            case ExifInterface.ORIENTATION_ROTATE_90:
+                return rotateImage(img, 90);
+            case ExifInterface.ORIENTATION_ROTATE_180:
+                return rotateImage(img, 180);
+            case ExifInterface.ORIENTATION_ROTATE_270:
+                return rotateImage(img, 270);
+            default:
+                return img;
+        }
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -141,14 +162,13 @@ public class MainActivity extends AppCompatActivity {
             readTextFromImage(BitmapFactory.decodeFile(picturePath, options));
         } else if (requestCode == CAMERA_CODE) {
             //Falls Resultat aus Kamera
+            //Rotieren und Scalieren des Fotos, um lesbar zu machen
             Bitmap bitmap = null;
             try {
-                bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), currentPhotoPath);
+                bitmap = getRotatedImage(currentPhotoPath);
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            //Rotieren des Fotos, um lesbar zu machen
-            bitmap = rotateImage(bitmap, (float) (90));
             //Erfassen des Textes auf Foto
             readTextFromImage(bitmap);
 
@@ -169,7 +189,24 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    //Camera Intent
+    Bitmap getRotatedImage(Uri imagePath) throws IOException {
+        Context context = this;
+
+        final BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        InputStream imageStream = context.getContentResolver().openInputStream(imagePath);
+        BitmapFactory.decodeStream(imageStream, null, options);
+        imageStream.close();
+
+        // Decode bitmap with inSampleSize set
+        options.inJustDecodeBounds = false;
+        imageStream = context.getContentResolver().openInputStream(imagePath);
+        Bitmap img = BitmapFactory.decodeStream(imageStream, null, options);
+
+        img = rotateImageIfRequired(context, img, imagePath);
+        return img;
+    }
+
     private void startCameraIntent() {
         Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (cameraIntent.resolveActivity(getPackageManager()) != null) {
@@ -177,8 +214,8 @@ public class MainActivity extends AppCompatActivity {
             File photoFile = null;
             try {
                 photoFile = createImageFile();
-            } catch (IOException ignored) {
-
+            } catch (IOException e) {
+                e.printStackTrace();
             }
 
             if (photoFile != null) {
@@ -189,18 +226,17 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
+
     private File createImageFile() throws IOException {
         //Zwischenspeichern eines Fotos der Kamera für höhere Auflösung
         String imageFileName = "temp";
         File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-        File image = File.createTempFile(
-                imageFileName, ".jpg", storageDir);
-        return image;
+        return File.createTempFile(imageFileName, ".jpg", storageDir);
     }
 
     void saveText() {
         String title;
-        if (textBox.getText() != null) {
+        if (!textBox.getText().toString().matches("")) {
             try {
                 String fileData = textBox.getText().toString();
                 title = (System.nanoTime()) + ".txt";
@@ -219,7 +255,6 @@ public class MainActivity extends AppCompatActivity {
         speaker.speak(text);
     }
 
-    //Erzeugt flüssig lesbaren Text für TTS
     String getReadableText(String input) {
         StringBuilder output = new StringBuilder();
         for (int i = 0; i < input.length(); i++) {
@@ -283,7 +318,6 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    //Rotiert bild um eine bestimmte Gradzahl
     public static Bitmap rotateImage(Bitmap source, float angle) {
         Matrix matrix = new Matrix();
         matrix.postRotate(angle);
