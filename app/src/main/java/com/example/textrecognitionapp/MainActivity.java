@@ -247,7 +247,7 @@ public class MainActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
         } else {
-            Toast toast = Toast.makeText(this, "Kein Text vorhanden!", Toast.LENGTH_LONG);
+            Toast toast = Toast.makeText(this, R.string.nosavabletext, Toast.LENGTH_LONG);
             toast.show();
         }
     }
@@ -310,7 +310,7 @@ public class MainActivity extends AppCompatActivity {
         FileOutputStream stream = new FileOutputStream(file);
         try {
             stream.write(data.getBytes());
-            Toast toast = Toast.makeText(context, "Datei wurde erfolgreich gespeichert!", Toast.LENGTH_LONG);
+            Toast toast = Toast.makeText(context, R.string.savedtext, Toast.LENGTH_LONG);
             toast.show();
         } catch (IOException e) {
             e.printStackTrace();
@@ -353,7 +353,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
             } else {
-                Toast toast = Toast.makeText(this, "Kein Text erkennbar", Toast.LENGTH_LONG);
+                Toast toast = Toast.makeText(this, R.string.noreadabletext, Toast.LENGTH_LONG);
                 toast.show();
             }
         }

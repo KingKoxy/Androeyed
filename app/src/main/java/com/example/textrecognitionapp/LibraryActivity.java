@@ -4,7 +4,9 @@ import android.os.Bundle;
 import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -28,7 +30,7 @@ public class LibraryActivity extends AppCompatActivity {
             listData.add(readFirstLine(f));
         }
         if (this.getFilesDir().list().length == 0) {
-            Toast toast = Toast.makeText(this, "Keine Dateien vorhanden", Toast.LENGTH_LONG);
+            Toast toast = Toast.makeText(this, R.string.nodata, Toast.LENGTH_LONG);
             toast.show();
             finish();
         }

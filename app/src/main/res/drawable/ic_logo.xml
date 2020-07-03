@@ -15,11 +15,13 @@
       android:pathData="m70.216,71.802c-6.204,-7.386 -9.605,-16.723 -9.606,-26.369 -0,-22.647 18.359,-41.005 41.005,-41.005 44.733,0 93.376,41.528 93.376,41.528 0,0 -38.487,27.261 -45.703,29.934"
       android:strokeLineJoin="miter"
       android:strokeWidth="5"
+      android:name="draw1"
       android:fillColor="#00000000"
       android:strokeColor="@color/colorTextPrimary"
       android:fillAlpha="0.97885198"
       android:strokeLineCap="round"/>
   <path
+      android:name="draw2"
       android:pathData="m131.976,21.135c6.204,7.386 9.605,16.723 9.606,26.369 0,22.647 -18.359,41.005 -41.005,41.005 -44.733,0 -93.376,-41.528 -93.376,-41.528 0,0 38.487,-27.261 45.703,-29.934"
       android:strokeLineJoin="miter"
       android:strokeWidth="5"

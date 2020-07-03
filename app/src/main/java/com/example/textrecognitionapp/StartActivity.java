@@ -1,18 +1,36 @@
 package com.example.textrecognitionapp;
 
 import android.content.Intent;
+import android.graphics.drawable.AnimatedVectorDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.motion.widget.MotionLayout;
 
 public class StartActivity extends AppCompatActivity {
+
+    MotionLayout motionLayout;
+    ImageView ivLogo;
+
     @Override
-    public void onCreate(Bundle savedInstanceState){
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start);
+
+        ivLogo = findViewById(R.id.ivLogo);
+        AnimatedVectorDrawable logo = null;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+            logo = (AnimatedVectorDrawable) ivLogo.getDrawable();
+            logo.start();
+        }
+
+
+        motionLayout = findViewById(R.id.motionLayout);
+        motionLayout.transitionToEnd();
 
         Button btnStart = findViewById(R.id.btnStart);
         btnStart.setOnClickListener(new View.OnClickListener() {
