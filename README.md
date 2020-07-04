@@ -7,8 +7,4 @@ This is an app called Androeyed which was developed in order to get a good grade
 1. __Read__ text out loud
 
 ## Activities
-![Start View](/exampleImages/startview.jpg | height=30)
-
-![Main View](/exampleImages/mainview.jpg | height=30)
-
-![Library View](/exampleImages/libraryview.jpg | height=30)
+<img style="float: right" src="/exampleImages/startview.jpg" height="300"> <img src="/exampleImages/mainview.jpg" height="300"> <img src="/exampleImages/libraryview.jpg" height="300">
