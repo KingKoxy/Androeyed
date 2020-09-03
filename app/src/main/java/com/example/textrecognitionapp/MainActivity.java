@@ -6,7 +6,6 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
-import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -22,6 +21,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
+import androidx.exifinterface.media.ExifInterface;
 
 import com.google.android.gms.vision.Frame;
 import com.google.android.gms.vision.text.TextBlock;
@@ -34,6 +34,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -43,14 +44,12 @@ public class MainActivity extends AppCompatActivity {
     ImageButton saveBtn;
     ImageButton playBtn;
     ImageButton stopBtn;
-    ImageButton replayBtn;
     EditText textBox;
-    Speaker speaker;
-
-    Uri currentPhotoPath = null;
 
     //Codes:
-    final int CAMERA_CODE = 0, LIBRARY_CODE = 1, GALLERY_CODE = 2, CHECK_TTS_CODE = 3;
+    final int CAMERA_CODE = 0, LIBRARY_CODE = 1, GALLERY_CODE = 2;
+    Uri currentPhotoPath = null;
+    TextToSpeech textToSpeech;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,8 +62,6 @@ public class MainActivity extends AppCompatActivity {
         textBox = findViewById(R.id.textBox);
         playBtn = findViewById(R.id.btnPlay);
         stopBtn = findViewById(R.id.btnStop);
-        replayBtn = findViewById(R.id.btnReplay);
-
 
         //Setzt die OnClick Methoden
         cameraBtn.setOnClickListener(new View.OnClickListener() {
@@ -94,7 +91,15 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        checkTTS();
+        textToSpeech = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
+            @Override
+            public void onInit(int status) {
+                if (status != TextToSpeech.ERROR) {
+                    textToSpeech.setLanguage(Locale.getDefault());
+                }
+            }
+        });
+
         playBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -104,19 +109,12 @@ public class MainActivity extends AppCompatActivity {
         stopBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                speaker.stop();
-            }
-        });
-        replayBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                speaker.stop();
-                readOutLoud();
+                textToSpeech.stop();
             }
         });
     }
 
-    private static Bitmap rotateImageIfRequired(Context context, Bitmap img, Uri selectedImage) throws IOException {
+    private Bitmap rotateImageIfRequired(Context context, Bitmap img, Uri selectedImage) throws IOException {
 
         InputStream input = context.getContentResolver().openInputStream(selectedImage);
         ExifInterface ei;
@@ -180,14 +178,6 @@ public class MainActivity extends AppCompatActivity {
             //Setzen des EditTextes zu gespeichertem Text
             textBox.setText(readFromFile(this, selectedImage.toString()));
 
-        } else if (requestCode == CHECK_TTS_CODE) {
-            if (resultCode == TextToSpeech.Engine.CHECK_VOICE_DATA_PASS) {
-                speaker = new Speaker(this);
-            } else {
-                Intent intent = new Intent();
-                intent.setAction(TextToSpeech.Engine.ACTION_INSTALL_TTS_DATA);
-                startActivity(intent);
-            }
         }
     }
 
@@ -236,7 +226,7 @@ public class MainActivity extends AppCompatActivity {
         return File.createTempFile(imageFileName, ".jpg", storageDir);
     }
 
-    void saveText() {
+    private void saveText() {
         String title;
         if (!textBox.getText().toString().matches("")) {
             try {
@@ -252,12 +242,12 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    void readOutLoud() {
+    private void readOutLoud() {
         String text = getReadableText(((EditText) this.findViewById(R.id.textBox)).getText().toString());
-        speaker.speak(text);
+        textToSpeech.speak(text, TextToSpeech.QUEUE_FLUSH, null);
     }
 
-    String getReadableText(String input) {
+    private String getReadableText(String input) {
         StringBuilder output = new StringBuilder();
         for (int i = 0; i < input.length(); i++) {
             if (input.charAt(i) != '\n') {
@@ -267,12 +257,6 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         return output.toString();
-    }
-
-    private void checkTTS() {
-        Intent check = new Intent();
-        check.setAction(TextToSpeech.Engine.ACTION_CHECK_TTS_DATA);
-        startActivityForResult(check, CHECK_TTS_CODE);
     }
 
     private String readFromFile(Context context, String title) {
@@ -320,7 +304,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public static Bitmap rotateImage(Bitmap source, float angle) {
+    private Bitmap rotateImage(Bitmap source, float angle) {
         Matrix matrix = new Matrix();
         matrix.postRotate(angle);
         return Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(),

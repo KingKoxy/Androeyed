@@ -43,7 +43,7 @@ public class StartActivity extends AppCompatActivity {
 
         String[] permissions = {"android.permission.WRITE_EXTERNAL_STORAGE", "android.permission.CAMERA"};
         final int REQUEST_CODE = 200;
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             requestPermissions(permissions, REQUEST_CODE);
         }
     }
